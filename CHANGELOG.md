@@ -1,3 +1,10 @@
+## [1.0.3](https://github.com/victoradepoju/configuration-server/compare/v1.0.2...v1.0.3) (2025-04-13)
+
+
+### Bug Fixes
+
+* cloud build test ([114c8ab](https://github.com/victoradepoju/configuration-server/commit/114c8ab73ff0d480e7fd984adb600938274d5cef))
+
 ## [1.0.2](https://github.com/victoradepoju/configuration-server/compare/v1.0.1...v1.0.2) (2025-04-13)
 
 
