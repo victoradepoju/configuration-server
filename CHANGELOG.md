@@ -1,3 +1,10 @@
+## [1.0.5](https://github.com/victoradepoju/configuration-server/compare/v1.0.4...v1.0.5) (2025-04-13)
+
+
+### Bug Fixes
+
+* test with tag push ([b5e57a3](https://github.com/victoradepoju/configuration-server/commit/b5e57a38dbc4c3014e46ef58c92aa48a6e2db054))
+
 ## [1.0.4](https://github.com/victoradepoju/configuration-server/compare/v1.0.3...v1.0.4) (2025-04-13)
 
 
