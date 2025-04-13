@@ -1,21 +1,33 @@
 steps:
+  # Fetch the latest Git tag
+  - name: 'gcr.io/cloud-builders/git'
+    args: [ 'describe', '--tags', '--abbrev=0' ]
+    id: 'Get Latest Git Tag'
+    # Save the Git tag as a substitution variable
+    env:
+      - 'VERSION_TAG=$(git describe --tags --abbrev=0)'
+
+  # Maven build step
   - name: 'maven:3.9.6-eclipse-temurin-21'
     args: [ 'mvn', 'clean', 'package', '-DskipTests' ]
 
+  # Docker build step using the Git tag for versioning
   - name: 'gcr.io/cloud-builders/docker'
     args:
       [
         'build', '-t',
-        'us-central1-docker.pkg.dev/trusty-fuze-456211-j9/moniejoint-repo/config-server:$SHORT_SHA', '.'
+        'us-central1-docker.pkg.dev/trusty-fuze-456211-j9/moniejoint-repo/config-server:${VERSION_TAG}', '.'
       ]
 
+  # Docker push step using the same version tag
   - name: 'gcr.io/cloud-builders/docker'
     args:
       [
         'push',
-        'us-central1-docker.pkg.dev/trusty-fuze-456211-j9/moniejoint-repo/config-server:$SHORT_SHA'
+        'us-central1-docker.pkg.dev/trusty-fuze-456211-j9/moniejoint-repo/config-server:${VERSION_TAG}'
       ]
 
+  # Kubernetes apply step for namespace
   - name: 'gcr.io/cloud-builders/kubectl'
     args:
       [
@@ -25,6 +37,7 @@ steps:
       - 'CLOUDSDK_COMPUTE_ZONE=us-central1-a'
       - 'CLOUDSDK_CONTAINER_CLUSTER=moniejoint-cluster'
 
+  # Kubernetes apply step for config-server
   - name: 'gcr.io/cloud-builders/kubectl'
     args:
       [
@@ -34,13 +47,14 @@ steps:
       - 'CLOUDSDK_COMPUTE_ZONE=us-central1-a'
       - 'CLOUDSDK_CONTAINER_CLUSTER=moniejoint-cluster'
 
+  # Set image in Kubernetes deployment using the Git tag
   - name: 'gcr.io/cloud-builders/kubectl'
     args:
       [
         'set',
         'image',
         'deployment/config-server',
-        'config-server=us-central1-docker.pkg.dev/trusty-fuze-456211-j9/moniejoint-repo/config-server:$SHORT_SHA',
+        'config-server=us-central1-docker.pkg.dev/trusty-fuze-456211-j9/moniejoint-repo/config-server:${VERSION_TAG}',
         '--namespace=moniejoint-ns'
       ]
     env:
