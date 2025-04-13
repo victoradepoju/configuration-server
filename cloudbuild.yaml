@@ -1,3 +1,6 @@
+substitutions:
+  _VERSION_TAG: ''  # A custom substitution variable for version tag
+
 steps:
   # Fetch the latest Git tag
   - name: 'gcr.io/cloud-builders/git'
