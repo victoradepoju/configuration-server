@@ -1,12 +1,9 @@
-substitutions:
-  _VERSION_TAG: ''  # A custom substitution variable for version tag
-
 steps:
-  # Fetch the latest Git tag
+  # Fetch the latest Git tag and set it as an environment variable
   - name: 'gcr.io/cloud-builders/git'
-    args: [ 'describe', '--tags', '--abbrev=0' ]
+    args: ['describe', '--tags', '--abbrev=0']
     id: 'Get Latest Git Tag'
-    # Save the Git tag as a substitution variable
+    # Capture the Git tag to use in subsequent steps
     env:
       - 'VERSION_TAG=$(git describe --tags --abbrev=0)'
 
@@ -65,7 +62,7 @@ steps:
       - 'CLOUDSDK_CONTAINER_CLUSTER=moniejoint-cluster'
 
 images:
-  - 'us-central1-docker.pkg.dev/trusty-fuze-456211-j9/moniejoint-repo/config-server:$SHORT_SHA'
+  - 'us-central1-docker.pkg.dev/trusty-fuze-456211-j9/moniejoint-repo/config-server:${VERSION_TAG}'
 
 options:
   logging: CLOUD_LOGGING_ONLY
