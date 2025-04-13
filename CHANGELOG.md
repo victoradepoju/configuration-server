@@ -1,3 +1,10 @@
+## [1.0.4](https://github.com/victoradepoju/configuration-server/compare/v1.0.3...v1.0.4) (2025-04-13)
+
+
+### Bug Fixes
+
+* update cloudbuild.yaml to cloud logging only ([44a2ab2](https://github.com/victoradepoju/configuration-server/commit/44a2ab2ea16ac1da89910b517aa634cc5603458a))
+
 ## [1.0.3](https://github.com/victoradepoju/configuration-server/compare/v1.0.2...v1.0.3) (2025-04-13)
 
 
