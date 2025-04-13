@@ -12,7 +12,6 @@ spring:
           clone-on-start: true
           search-paths: .
 
-
 server:
   port: 8001
 
