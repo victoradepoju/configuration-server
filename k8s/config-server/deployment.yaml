@@ -17,7 +17,7 @@ spec:
     spec:
       containers:
         - name: config-server
-          image: us-central1-docker.pkg.dev/trusty-fuze-456211-j9/${PROJECT_ID}/config-server:${IMAGE_TAG}
+          image: us-central1-docker.pkg.dev/trusty-fuze-456211-j9/config-server:placeholder
           ports:
             - containerPort: 8001
           resources:
