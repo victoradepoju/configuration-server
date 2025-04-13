@@ -1,15 +1,14 @@
 steps:
-  # Fetch the latest Git tag and set it as an environment variable
+  # Fetch the latest Git tag and store it in an environment variable
   - name: 'gcr.io/cloud-builders/git'
     args: ['describe', '--tags', '--abbrev=0']
     id: 'Get Latest Git Tag'
-    # Capture the Git tag to use in subsequent steps
     env:
       - 'VERSION_TAG=$(git describe --tags --abbrev=0)'
 
   # Maven build step
   - name: 'maven:3.9.6-eclipse-temurin-21'
-    args: [ 'mvn', 'clean', 'package', '-DskipTests' ]
+    args: ['mvn', 'clean', 'package', '-DskipTests']
 
   # Docker build step using the Git tag for versioning
   - name: 'gcr.io/cloud-builders/docker'
@@ -18,6 +17,8 @@ steps:
         'build', '-t',
         'us-central1-docker.pkg.dev/trusty-fuze-456211-j9/moniejoint-repo/config-server:${VERSION_TAG}', '.'
       ]
+    env:
+      - 'VERSION_TAG=$(git describe --tags --abbrev=0)'  # Set the VERSION_TAG in the environment
 
   # Docker push step using the same version tag
   - name: 'gcr.io/cloud-builders/docker'
@@ -26,6 +27,8 @@ steps:
         'push',
         'us-central1-docker.pkg.dev/trusty-fuze-456211-j9/moniejoint-repo/config-server:${VERSION_TAG}'
       ]
+    env:
+      - 'VERSION_TAG=$(git describe --tags --abbrev=0)'
 
   # Kubernetes apply step for namespace
   - name: 'gcr.io/cloud-builders/kubectl'
@@ -36,6 +39,7 @@ steps:
     env:
       - 'CLOUDSDK_COMPUTE_ZONE=us-central1-a'
       - 'CLOUDSDK_CONTAINER_CLUSTER=moniejoint-cluster'
+      - 'VERSION_TAG=$(git describe --tags --abbrev=0)'  # Ensure VERSION_TAG is available here too
 
   # Kubernetes apply step for config-server
   - name: 'gcr.io/cloud-builders/kubectl'
@@ -46,6 +50,7 @@ steps:
     env:
       - 'CLOUDSDK_COMPUTE_ZONE=us-central1-a'
       - 'CLOUDSDK_CONTAINER_CLUSTER=moniejoint-cluster'
+      - 'VERSION_TAG=$(git describe --tags --abbrev=0)'  # Ensure VERSION_TAG is available here too
 
   # Set image in Kubernetes deployment using the Git tag
   - name: 'gcr.io/cloud-builders/kubectl'
@@ -60,6 +65,7 @@ steps:
     env:
       - 'CLOUDSDK_COMPUTE_ZONE=us-central1-a'
       - 'CLOUDSDK_CONTAINER_CLUSTER=moniejoint-cluster'
+      - 'VERSION_TAG=$(git describe --tags --abbrev=0)'  # Ensure VERSION_TAG is available here too
 
 images:
   - 'us-central1-docker.pkg.dev/trusty-fuze-456211-j9/moniejoint-repo/config-server:${VERSION_TAG}'
