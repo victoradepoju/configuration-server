@@ -1,0 +1,51 @@
+steps:
+  - name: 'gcr.io/cloud-builders/mvn'
+    args: ['clean', 'package', '-DskipTests']
+
+  - name: 'gcr.io/cloud-builders/docker'
+    args:
+      [
+        'build', '-t',
+        'us-central1-docker.pkg.dev/trusty-fuze-456211-j9/moniejoint-repo/config-server:$SHORT_SHA', '.'
+      ]
+
+  - name: 'gcr.io/cloud-builders/docker'
+    args:
+      [
+        'push',
+        'us-central1-docker.pkg.dev/trusty-fuze-456211-j9/moniejoint-repo/config-server:$SHORT_SHA'
+      ]
+
+  - name: 'gcr.io/cloud-builders/kubectl'
+    args:
+      [
+        'apply', '-f', 'k8s/config-server/namespace.yaml'
+      ]
+    env:
+      - 'CLOUDSDK_COMPUTE_ZONE=us-central1-a'
+      - 'CLOUDSDK_CONTAINER_CLUSTER=moniejoint-cluster'
+
+  - name: 'gcr.io/cloud-builders/kubectl'
+    args:
+      [
+        'apply', '-f', 'k8s/config-server/'
+      ]
+    env:
+      - 'CLOUDSDK_COMPUTE_ZONE=us-central1-a'
+      - 'CLOUDSDK_CONTAINER_CLUSTER=moniejoint-cluster'
+
+  - name: 'gcr.io/cloud-builders/kubectl'
+    args:
+      [
+        'set',
+        'image',
+        'deployment/config-server',
+        'config-server=us-central1-docker.pkg.dev/trusty-fuze-456211-j9/moniejoint-repo/config-server:$SHORT_SHA',
+        '--namespace=moniejoint-ns'
+      ]
+    env:
+      - 'CLOUDSDK_COMPUTE_ZONE=us-central1-a'
+      - 'CLOUDSDK_CONTAINER_CLUSTER=moniejoint-cluster'
+
+images:
+  - 'us-central1-docker.pkg.dev/trusty-fuze-456211-j9/moniejoint-repo/config-server:$SHORT_SHA'
