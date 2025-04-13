@@ -6,7 +6,7 @@ metadata:
   labels:
     app: config-server
 spec:
-  replicas: 2
+  replicas: 1
   selector:
     matchLabels:
       app: config-server
@@ -17,9 +17,9 @@ spec:
     spec:
       containers:
         - name: config-server
-          image: us-central1-docker.pkg.dev/trusty-fuze-456211-j9/microservices/config-server:latest
+          image: us-central1-docker.pkg.dev/trusty-fuze-456211-j9/${PROJECT_ID}/config-server:${IMAGE_TAG}
           ports:
-            - containerPort: 8888
+            - containerPort: 8001
           resources:
             limits:
               memory: "512Mi"
