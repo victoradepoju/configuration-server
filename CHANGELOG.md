@@ -1,3 +1,10 @@
+## [1.0.6](https://github.com/victoradepoju/configuration-server/compare/v1.0.5...v1.0.6) (2025-04-13)
+
+
+### Bug Fixes
+
+* test with tag trigger ([04a2850](https://github.com/victoradepoju/configuration-server/commit/04a285090dca56103e04455c41bb0c1f18eee303))
+
 ## [1.0.5](https://github.com/victoradepoju/configuration-server/compare/v1.0.4...v1.0.5) (2025-04-13)
 
 
