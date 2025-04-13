@@ -1,6 +1,3 @@
-options:
-  logging: CLOUD_LOGGING_ONLY
-
 steps:
   - name: 'gcr.io/cloud-builders/mvn'
     args: ['clean', 'package', '-DskipTests']
@@ -52,3 +49,6 @@ steps:
 
 images:
   - 'us-central1-docker.pkg.dev/trusty-fuze-456211-j9/moniejoint-repo/config-server:$SHORT_SHA'
+
+options:
+  logging: CLOUD_LOGGING_ONLY
