@@ -1,7 +1,6 @@
 steps:
   - name: 'maven:3.9.6-eclipse-temurin-21'
-    args: [ 'clean', 'package', '-DskipTests' ]
-
+    args: [ 'mvn', 'clean', 'package', '-DskipTests' ]
 
   - name: 'gcr.io/cloud-builders/docker'
     args:
