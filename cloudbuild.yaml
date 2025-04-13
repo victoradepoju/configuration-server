@@ -1,65 +1,48 @@
 steps:
-  # Step 1: Get version tag or fallback to SHORT_SHA
-  - name: 'gcr.io/cloud-builders/git'
-    entrypoint: 'bash'
-    args:
-      - '-c'
-      - |
-        set -e
-        TAG=$(git describe --tags --abbrev=0 2>/dev/null || echo "${SHORT_SHA}")
-        echo "Using image tag: $TAG"
-        echo "$TAG" > version.txt
-
-  # Step 2: Maven build
+  # Maven build step
   - name: 'maven:3.9.6-eclipse-temurin-21'
-    args: [ 'mvn', 'clean', 'package', '-DskipTests' ]
+    args: ['mvn', 'clean', 'package', '-DskipTests']
 
-  # Step 3: Docker build
+  # Docker build step using both TAG_NAME and PROJECT_ID
   - name: 'gcr.io/cloud-builders/docker'
-    entrypoint: 'bash'
     args:
-      - '-c'
-      - |
-        TAG=$(cat version.txt)
-        docker build -t us-central1-docker.pkg.dev/trusty-fuze-456211-j9/moniejoint-repo/config-server:$TAG .
+      - 'build'
+      - '-t'
+      - 'us-central1-docker.pkg.dev/${PROJECT_ID}/moniejoint-repo/config-server:${TAG_NAME}'
+      - '.'
 
-  # Step 4: Docker push
+  # Docker push step
   - name: 'gcr.io/cloud-builders/docker'
-    entrypoint: 'bash'
     args:
-      - '-c'
-      - |
-        TAG=$(cat version.txt)
-        docker push us-central1-docker.pkg.dev/trusty-fuze-456211-j9/moniejoint-repo/config-server:$TAG
+      - 'push'
+      - 'us-central1-docker.pkg.dev/${PROJECT_ID}/moniejoint-repo/config-server:${TAG_NAME}'
 
-  # Step 5: Apply Kubernetes resources
+  # Kubernetes steps
   - name: 'gcr.io/cloud-builders/kubectl'
-    args: [ 'apply', '-f', 'k8s/config-server/namespace.yaml' ]
+    args: ['apply', '-f', 'k8s/config-server/namespace.yaml']
     env:
       - 'CLOUDSDK_COMPUTE_ZONE=us-central1-a'
       - 'CLOUDSDK_CONTAINER_CLUSTER=moniejoint-cluster'
 
   - name: 'gcr.io/cloud-builders/kubectl'
-    args: [ 'apply', '-f', 'k8s/config-server/' ]
+    args: ['apply', '-f', 'k8s/config-server/']
     env:
       - 'CLOUDSDK_COMPUTE_ZONE=us-central1-a'
       - 'CLOUDSDK_CONTAINER_CLUSTER=moniejoint-cluster'
 
-  # Step 6: Set image with tag
   - name: 'gcr.io/cloud-builders/kubectl'
-    entrypoint: 'bash'
     args:
-      - '-c'
-      - |
-        TAG=$(cat version.txt)
-        kubectl set image deployment/config-server config-server=us-central1-docker.pkg.dev/trusty-fuze-456211-j9/moniejoint-repo/config-server:$TAG --namespace=moniejoint-ns
+      - 'set'
+      - 'image'
+      - 'deployment/config-server'
+      - 'config-server=us-central1-docker.pkg.dev/${PROJECT_ID}/moniejoint-repo/config-server:${TAG_NAME}'
+      - '--namespace=moniejoint-ns'
     env:
       - 'CLOUDSDK_COMPUTE_ZONE=us-central1-a'
       - 'CLOUDSDK_CONTAINER_CLUSTER=moniejoint-cluster'
 
-# You can optionally include the final image tag here for tracking
 images:
-  - 'us-central1-docker.pkg.dev/trusty-fuze-456211-j9/moniejoint-repo/config-server'
+  - 'us-central1-docker.pkg.dev/${PROJECT_ID}/moniejoint-repo/config-server:${TAG_NAME}'
 
 options:
   logging: CLOUD_LOGGING_ONLY
