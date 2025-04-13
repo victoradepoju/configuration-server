@@ -49,3 +49,4 @@ steps:
 
 images:
   - 'us-central1-docker.pkg.dev/trusty-fuze-456211-j9/moniejoint-repo/config-server:$SHORT_SHA'
+
